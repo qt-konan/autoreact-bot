@@ -28,7 +28,6 @@ EMOJIS = [
 # Store dispatcher instances
 dispatchers = []
 
-@dispatchers.append
 def setup_dispatcher(token: str):
     bot = Bot(token=token, parse_mode="HTML")
     dp  = Dispatcher()
