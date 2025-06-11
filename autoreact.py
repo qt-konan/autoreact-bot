@@ -7,7 +7,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters import Command
-from aiogram.types import DefaultBotProperties, ReactionTypeEmoji
 from dotenv import load_dotenv
 
 # ─── Load .env ────────────────────────────────────────────────────────────────
@@ -28,8 +27,7 @@ EMOJIS = [
 
 # ─── Dispatcher Factory ───────────────────────────────────────────────────────
 def setup_dispatcher(token: str):
-    # ✅ Use DefaultBotProperties to silence parse_mode deprecation warning
-    bot = Bot(token=token, default=DefaultBotProperties(parse_mode="HTML"))
+    bot = Bot(token=token, parse_mode="HTML")
     dp  = Dispatcher()
 
     # ── Startup Handler ────────────────────────────────────────────────────
@@ -77,13 +75,7 @@ def setup_dispatcher(token: str):
             if message.text and not message.text.startswith("/"):
                 emoji = random.choice(EMOJIS)
                 print(f"🎯 Reacting to msg {message.message_id} in chat {message.chat.id} with {emoji}")
-
-                await message.bot.set_message_reaction(
-                    chat_id=message.chat.id,
-                    message_id=message.message_id,
-                    reaction=[ReactionTypeEmoji(emoji=emoji)]
-                )
-
+                await message.reply(emoji)
                 print(f"✨ Reaction sent to msg {message.message_id} in chat {message.chat.id}")
         except Exception as e:
             print(f"❌ Reaction error in chat {message.chat.id}: {e}")
@@ -122,7 +114,7 @@ class DummyHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
 def start_dummy_server():
-    port = int(os.environ.get("PORT", 10000))  # Render injects this
+    port = int(os.environ.get("PORT", 10000))
     server = HTTPServer(("0.0.0.0", port), DummyHandler)
     print(f"🌐 Dummy server listening on port {port}")
     server.serve_forever()
@@ -132,10 +124,7 @@ if __name__ == "__main__":
     try:
         print("🔁 Launching bot system…")
 
-        # Start dummy HTTP server in a background thread
         threading.Thread(target=start_dummy_server, daemon=True).start()
-
-        # Start asyncio event loop for all bots
         asyncio.run(main())
 
     except Exception as e:
