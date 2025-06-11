@@ -122,9 +122,11 @@ def start_dummy_server():
 if __name__ == "__main__":
     try:
         print("🔁 Launching bot system...")
-        
-    # Start dummy HTTP server (needed for Render health check)
-    threading.Thread(target=start_dummy_server, daemon=True).start()
+
+        # Start dummy HTTP server (needed for Render health check)
+        threading.Thread(target=start_dummy_server, daemon=True).start()
+
         asyncio.run(main())
+
     except Exception as e:
         print(f"🔥 Fatal error in main(): {e}")
