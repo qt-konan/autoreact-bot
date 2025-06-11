@@ -7,6 +7,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from aiogram import Bot, Dispatcher, types
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters import Command
+from aiogram.types import ReactionTypeEmoji
 from dotenv import load_dotenv
 
 # ─── Load .env ────────────────────────────────────────────────────────────────
@@ -75,7 +76,13 @@ def setup_dispatcher(token: str):
             if message.text and not message.text.startswith("/"):
                 emoji = random.choice(EMOJIS)
                 print(f"🎯 Reacting to msg {message.message_id} in chat {message.chat.id} with {emoji}")
-                await message.reply(emoji)
+
+                await message.bot.set_message_reaction(
+                    chat_id=message.chat.id,
+                    message_id=message.message_id,
+                    reaction=[ReactionTypeEmoji(emoji=emoji)]
+                )
+
                 print(f"✨ Reaction sent to msg {message.message_id} in chat {message.chat.id}")
         except Exception as e:
             print(f"❌ Reaction error in chat {message.chat.id}: {e}")
